@@ -1,0 +1,557 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{siunitx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{microtype}
+\usepackage{xparse}
+
+\geometry{margin=2.2cm}
+\graphicspath{{Images/}}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!50!black,
+  urlcolor=blue!50!black,
+  citecolor=blue!50!black
+}
+
+\sisetup{detect-all=true}
+
+% Safe figure inclusion: if a file is missing, the document still compiles
+% and displays a visible placeholder with the expected file path.
+\NewDocumentCommand{\safeincludegraphics}{O{}m}{%
+  \IfFileExists{#2}{%
+    \includegraphics[#1]{#2}%
+  }{%
+    \fbox{%
+      \begin{minipage}[c][0.22\textheight][c]{0.82\linewidth}
+      \centering
+      Missing figure file:\\[0.5em]
+      \texttt{\detokenize{#2}}
+      \end{minipage}%
+    }%
+  }%
+}
+
+\newcommand{\logit}{\operatorname{logit}}
+
+\title{Moss Distribution in the LEO1 Bath:\\
+Topographic Controls and Evidence for a Bounded Moisture Optimum}
+\author{}
+\date{28 April 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This technical note analyzes the spatial distribution of moss in the LEO1 bath
+using three rectified stitched images, a soil-surface digital elevation model,
+and a container-geometry raster. The analysis is centered on the biological
+pattern itself, rather than on the visually prominent drainage network alone.
+Across the three dates, the moss footprint is largely persistent, whereas the
+November-to-December change is interpreted mainly as seasonal greening of
+previously occupied regions. The strongest stable moss signal is displaced away
+from the deepest central trough and is concentrated on off-center shoulder zones.
+This pattern is consistent with a bounded moisture optimum: moss is favored in
+zones that remain moist, but not in zones that are maximally wet, strongly
+flushed, or hydrologically unstable.
+\end{abstract}
+
+\section{Objective and Data}
+
+The goal of this note is to determine how stable moss occurrence is related to
+bath geometry and derived topographic variables. The central question is not
+only where water accumulates, but why the strongest moss signal is not observed
+in the deepest part of the central trough.
+
+The analysis uses three stitched observations of the same LEO1 bath, acquired
+on 3 November 2022, 22 November 2022, and 7 December 2022. These images were
+interpreted together with the soil-surface raster \texttt{LEO1\_soil.asc} and
+the container-geometry raster \texttt{LEO1\_container.asc}. The image data were
+rectified to the bath coordinate system before comparison with the topographic
+rasters.
+
+The working hypothesis tested here is that moss responds to a moisture window,
+not to wetness monotonically. In this interpretation, the central trough may be
+wet, but it may also be too saturated, too frequently flushed, or too unstable
+to support persistent moss growth.
+
+\section{Image Registration and Moss Proxy}
+
+The three RGB mosaics were cropped to the soil surface, corrected by a
+perspective transform, and rescaled to a common rectangular domain. This step
+removes the surrounding frame and makes the three dates directly comparable in
+bath coordinates.
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[t]{0.31\linewidth}
+    \centering
+    \safeincludegraphics[height=0.50\textheight,keepaspectratio]{Images/LEO_2022_11_03_cropped_rectified_rectangle.jpg}
+    \caption{3 November 2022}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.31\linewidth}
+    \centering
+    \safeincludegraphics[height=0.50\textheight,keepaspectratio]{Images/LEO_2022_11_22_cropped_rectified_rectangle.jpg}
+    \caption{22 November 2022}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.31\linewidth}
+    \centering
+    \safeincludegraphics[height=0.50\textheight,keepaspectratio]{Images/LEO_2022_12_07_cropped_rectified_rectangle.jpg}
+    \caption{7 December 2022}
+  \end{subfigure}
+  \caption{Rectified source images used in the analysis. The large-scale moss
+  distribution is already visible on the first date and remains spatially
+  coherent through December. The later images show stronger green coloration,
+  consistent with seasonal greening of an existing pattern.}
+  \label{fig:rectified-images}
+\end{figure}
+
+A broad moss proxy was used instead of a narrow green threshold. This choice is
+important because moss color changes from yellow-green to greener tones over
+the observation period. The proxy therefore aims to represent moss presence
+rather than a single color state. From the date-specific proxies, two derived
+quantities were computed:
+\begin{enumerate}[leftmargin=1.5em]
+  \item a persistent moss footprint, defined by repeated occurrence across the
+  three dates;
+  \item a seasonal greening signal, defined by the change between early November
+  and early December.
+\end{enumerate}
+
+The persistent footprint is the primary response variable in the analysis below.
+It is compared with lateral position \(|x|\), downstream coordinate \(s\), trough
+depth, a flow-accumulation proxy, wall proximity, and soil thickness relative to
+the container.
+
+\section{Observed Moss Pattern}
+
+The persistent moss footprint is broad and structured. It is not concentrated in
+the deepest central corridor. Instead, the main stable patches occur on the
+flanks and in the outer half of the bath.
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[t]{0.46\linewidth}
+    \centering
+    \safeincludegraphics[width=0.82\linewidth]{Images/persistent_moss_map.jpg}
+    \caption{Persistent moss footprint}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.46\linewidth}
+    \centering
+    \safeincludegraphics[width=0.82\linewidth]{Images/seasonal_greening_map.jpg}
+    \caption{Seasonal greening}
+  \end{subfigure}
+  \caption{Moss-centered diagnostics. The stable moss footprint is displaced
+  from the deepest central trough, whereas the strongest seasonal greening is
+  largely co-located with regions that were already moss-bearing. This supports
+  the interpretation of seasonal color change rather than rapid colonization of
+  entirely new zones.}
+  \label{fig:persistent-and-greening}
+\end{figure}
+
+Table~\ref{tab:summary} summarizes the main spatial statistics. The median
+lateral position of stable moss is \(\SI{3.7}{m}\), placing the stable moss core
+well away from the centerline. The corresponding median trough depth is only
+\(\SI{0.088}{m}\), indicating that the stable zone is associated with shallow to
+intermediate topographic depression rather than the deepest drainage core.
+
+\begin{table}[H]
+  \centering
+  \caption{Summary metrics for the stable moss pattern.}
+  \label{tab:summary}
+  \begin{tabular}{>{\raggedright\arraybackslash}p{9.5cm}r}
+    \toprule
+    Metric & Value \\
+    \midrule
+    Cells with stable moss signal, present on at least two dates & 26.6\% \\
+    Cells strong on all three dates & 7.1\% \\
+    Median lateral position of the stable moss zone, \(|x|\) & \SI{3.7}{m} \\
+    Median trough depth of the stable moss zone & \SI{0.088}{m} \\
+    Median \(\log(1+\mathrm{flow})\) of the stable moss zone & 2.20 \\
+    Median downstream position of the stable moss zone & \SI{17.65}{m} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section{Dendritic Moss-Free Pattern and Topographic Controls}
+
+The rectified photographs of the LEO1 surface show that regions of weak or
+absent moss are not randomly distributed. Instead, they form a connected
+dendritic pattern that resembles a surface drainage network. This pattern is
+consistent with preferential flow over an inclined heterogeneous substrate:
+small topographic depressions collect runoff, and neighboring depressions
+become connected into larger rills and tributary-like channels.
+
+The central dark corridor and its lateral branches therefore appear to be
+negative biological imprints of the most hydrologically active parts of the
+surface. Although these corridors are likely wetter than the surrounding
+shoulder zones, they need not provide the most favorable habitat for moss.
+Concentrated flow can suppress persistent moss cover through several coupled
+mechanisms:
+\begin{enumerate}[leftmargin=1.5em]
+	\item \textbf{Excess saturation.} Persistent water saturation can reduce
+	oxygen availability in the near-surface layer and create unfavorable
+	conditions for moss growth.
+	
+	\item \textbf{Surface flushing.} Concentrated runoff can remove spores,
+	fine particles, organic material, and weakly attached biological crust.
+	
+	\item \textbf{Sediment redistribution.} Flowing water can repeatedly
+	transport and redeposit fine sediment along active drainage paths, thereby
+	disturbing the colonized surface.
+	
+	\item \textbf{Mechanical instability.} Active flow corridors may undergo
+	more frequent surface reorganization than adjacent shoulders, reducing the
+	likelihood of stable moss establishment.
+	
+	\item \textbf{Moisture-window limitation.} Moss growth is favored not by
+	maximal wetness, but by an intermediate moisture regime. The flanks of the
+	drainage network can remain sufficiently moist while avoiding prolonged
+	saturation and strong flushing.
+\end{enumerate}
+
+Thus the dendritic moss-free pattern is interpreted as a drainage-controlled
+exclusion zone rather than as a primary biological branching structure. In this
+interpretation, moss-rich regions occupy the shoulders and flanks of the
+drainage network, whereas moss-poor regions mark the most active flow
+corridors. The photographs therefore support a bounded-moisture hypothesis:
+persistent moss cover is favored where water availability is sufficient but not
+extreme, while the deepest and most actively draining portions of the central
+trough are too wet, too unstable, or too frequently flushed to support sustained
+colonization.
+
+\section{Topographic Response Structure}
+
+The response curves in Fig.~\ref{fig:response-curves} provide quantitative
+support for this interpretation. The persistent moss proxy increases with
+lateral distance from the centerline, indicating that moss cover is displaced
+away from the central trough. Its dependence on trough depth is non-monotone:
+moss is favored at shallow to intermediate depths and decreases sharply once the
+trough becomes sufficiently deep. In addition, large values of the
+flow-accumulation proxy are associated with weaker moss signal.
+
+\begin{figure}[H]
+	\centering
+	\safeincludegraphics[width=0.95\linewidth]{Images/moss_response_curves.jpg}
+	\caption{Response curves for persistent moss and seasonal greening. The
+		persistent moss proxy increases with distance from the centerline, reaches its
+		largest values at shallow to intermediate trough depths, and decreases in the
+		deepest trough. The decline beyond approximately \(\SI{0.4}{m}\) provides
+		evidence against a monotone ``wetter is better'' interpretation.}
+	\label{fig:response-curves}
+\end{figure}
+
+The same spatial niche is visible in bath coordinates
+(Fig.~\ref{fig:zone-heatmap}). The highest mean persistent moss signal occurs
+in the outer half of the bath, especially for
+\(|x| \gtrsim \SI{3}{m}\), and is most pronounced in the middle and lower
+portions of the domain.
+
+\begin{figure}[H]
+	\centering
+	\safeincludegraphics[width=0.62\linewidth]{Images/moss_zone_heatmap.jpg}
+	\caption{Mean persistent moss proxy as a function of lateral position
+		\(|x|\) and downstream coordinate \(s\). The highest values occur away from
+		the centerline and are concentrated in the middle and lower portions of the
+		bath.}
+	\label{fig:zone-heatmap}
+\end{figure}
+
+\section{Cross-Sectional Evidence}
+
+Cross-sectional profiles provide the clearest geometric test of the proposed
+interpretation. In several sections, the elevation minimum of the central trough
+is moss-poor, whereas higher moss values occur on the flanks and outer
+shoulders. This demonstrates that the observed relationship is not merely an
+artifact of two-dimensional map overlay or color thresholding.
+
+\begin{figure}[H]
+	\centering
+	\safeincludegraphics[width=0.95\linewidth]{Images/moss_cross_sections.jpg}
+	\caption{Cross-sections through the bath surface colored by the persistent
+		moss proxy. The trough minima are repeatedly moss-poor, whereas stronger moss
+		signal occurs on the flanks and outer shoulders. This directly supports the
+		shoulder-zone interpretation.}
+	\label{fig:moss-cross-sections}
+\end{figure}
+
+Together, the photographic, response-curve, and cross-sectional evidence
+indicate that the stable moss habitat is not located in the deepest part of the
+central drainage corridor. Instead, it is displaced toward off-channel shoulder
+zones where moisture is available but hydrological disturbance is weaker.
+
+\section{Smooth Surface Representation}
+
+For geometric analysis, the soil surface was represented by a cubic bivariate
+smoothing spline,
+\[
+  z(x,s) \approx S(x,s),
+\]
+fitted to the valid cells of \texttt{LEO1\_soil.asc}. The reported root-mean-square
+error of the smoothed surface is approximately
+\[
+  \mathrm{RMSE} \approx \SI{0.071}{m}.
+\]
+The spline is used as a differentiable representation of the raster topography,
+not as a physical seepage model. Its purpose is to make quantities such as
+local slope, trough depth, and cross-sectional profile easier to interpret.
+
+\section{Stable Moss Ranking Model}
+
+Stable moss occurrence was summarized with a compact logistic ranking model,
+\begin{equation}
+  \logit P(M=1)
+  =
+  \beta_0
+  + \beta_w W
+  - \beta_f F
+  - \gamma (d-d_0)^2
+  + \beta_t T,
+  \label{eq:ranking-model}
+\end{equation}
+where \(W\) is wall proximity, \(F\) is standardized \(\log(1+\mathrm{flow})\),
+\(d\) is trough depth, and \(T\) is standardized soil thickness relative to the
+container. The quadratic depth term represents a bounded moisture window: the
+probability of stable moss is allowed to peak at an intermediate depth and to
+decline when the trough becomes too shallow or too deep.
+
+\begin{table}[H]
+  \centering
+  \caption{Fitted parameters of the stable moss ranking model.}
+  \label{tab:model-params}
+  \begin{tabular}{>{\raggedright\arraybackslash}p{7.0cm}r}
+    \toprule
+    Parameter & Estimate \\
+    \midrule
+    \(\beta_0\) & \(-0.307\) \\
+    \(\beta_w\) & \(1.286\) \\
+    \(\beta_f\) & \(0.185\) \\
+    \(\gamma\) & \(11.971\) \\
+    \(d_0\) & \SI{0.407}{m} \\
+    \(\beta_t\) & \(0.146\) \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The model is not intended as a complete mechanistic law. It is a low-dimensional
+ranking model that tests whether topographic variables can order favorable and
+unfavorable regions. Its performance is moderate but meaningful: the reported
+training AUC is 0.724 and the spatial cross-validated AUC is 0.657.
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[t]{0.31\linewidth}
+    \centering
+    \safeincludegraphics[width=\linewidth]{Images/observed_stable_moss_zone.jpg}
+    \caption{Observed stable moss}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.31\linewidth}
+    \centering
+    \safeincludegraphics[width=\linewidth]{Images/predicted_stable_moss_probability.jpg}
+    \caption{Predicted probability}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.31\linewidth}
+    \centering
+    \safeincludegraphics[width=\linewidth]{Images/stable_moss_residual.jpg}
+    \caption{Observed minus predicted}
+  \end{subfigure}
+  \caption{Spatial diagnostics for the stable moss ranking model. The model
+  reproduces the broad displacement of stable moss away from the central hollow,
+  although residual structure indicates that additional biological or
+  hydrological variables remain unresolved.}
+  \label{fig:spatial-model-diagnostics}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \safeincludegraphics[width=0.70\linewidth]{Images/stable_moss_calibration.jpg}
+  \caption{Calibration of the ranking model. Across predicted-suitability
+  deciles, the observed stable-moss fraction increases from about 7\% to about
+  48\%. The monotone ordering supports the use of the model as a suitability
+  ranking, even though it is not a full process model.}
+  \label{fig:calibration}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[t]{0.47\linewidth}
+    \centering
+    \safeincludegraphics[width=\linewidth]{Images/phase_curve_trough_depth_optimum.jpg}
+    \caption{Trough-depth response}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.47\linewidth}
+    \centering
+    \safeincludegraphics[width=\linewidth]{Images/phase_curve_wall_effect.jpg}
+    \caption{Wall-proximity response}
+  \end{subfigure}
+  \caption{One-dimensional model responses. The depth curves exhibit a
+  non-monotone optimum near \(\SI{0.4}{m}\), while wall proximity increases the
+  predicted probability over the range shown. Increasing flow shifts suitability
+  downward.}
+  \label{fig:model-response-curves}
+\end{figure}
+
+\section{Biophysical Interpretation}
+
+The observed pattern is most naturally interpreted as evidence for a bounded
+moisture optimum. The central trough is likely wetter than the flanks, but it
+may also experience longer saturation, lower oxygen availability, sediment
+redistribution, flushing, and more frequent surface disturbance. These effects
+can make the wettest zone less favorable biologically, even if water is not
+limiting there.
+
+The flanks of the trough provide a plausible intermediate regime. They remain
+moist but are less likely to experience persistent waterlogging or strong
+surface washout. The positive wall-proximity term in the ranking model suggests
+that the box-like container geometry may further stabilize these outer shoulder
+regions, either by retaining moisture laterally or by reducing erosive surface
+flow.
+
+This interpretation is consistent with broader observations from moss and
+biological soil-crust systems: moisture promotes activity only up to an optimum,
+whereas excessive saturation, hypoxic stress, runoff, and disturbance can
+suppress growth or persistence \cite{Liu2026,Bartels2018,Macek2022,Szyja2023,Review2023}.
+
+\section{Limitations and Needed Measurements}
+
+The present analysis establishes a spatial association between moss persistence
+and bath geometry. It does not directly measure the water state, oxygen status,
+or disturbance history of the substrate. A mechanistic test of the bounded
+moisture hypothesis would require at least one of the following:
+\begin{itemize}[leftmargin=1.5em]
+  \item local time series of soil moisture or matric potential;
+  \item observations of standing water or saturation duration in the trough;
+  \item tracer experiments to quantify flushing and residence time;
+  \item repeated high-resolution surveys after controlled irrigation events;
+  \item measurements of fine-sediment redistribution and surface stability.
+\end{itemize}
+
+These measurements would distinguish between two related mechanisms: excessive
+wetness itself and hydrologic instability caused by concentrated flow.
+
+\section{Conclusion}
+
+The dominant biological pattern in the LEO1 bath is not simple occupation of
+the wettest available ground. The stable moss footprint is displaced away from
+the deepest central trough and is concentrated on off-center shoulder zones.
+The combined evidence from rectified imagery, response curves, cross-sections,
+and a compact ranking model supports a bounded-moisture interpretation: moss is
+favored where the substrate remains sufficiently moist but is not maximally wet,
+strongly flushed, or hydrologically unstable.
+
+\appendix
+\section{Additional Phase-Model Surfaces}
+
+The following panels show the model probability surfaces under different flow
+conditions. They are included as supporting diagnostics; the main text relies
+primarily on the observed footprint, cross-sections, response curves, and
+one-dimensional model responses.
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[t]{0.32\linewidth}
+    \centering
+    \safeincludegraphics[width=\linewidth]{Images/phase_surface_simple_low_flow.jpg}
+    \caption{Low flow}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.32\linewidth}
+    \centering
+    \safeincludegraphics[width=\linewidth]{Images/phase_surface_simple_median_flow.jpg}
+    \caption{Median flow}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.32\linewidth}
+    \centering
+    \safeincludegraphics[width=\linewidth]{Images/phase_surface_simple_high_flow.jpg}
+    \caption{High flow}
+  \end{subfigure}
+  \caption{Simple phase-model suitability surfaces under increasing flow.}
+  \label{fig:simple-phase-surfaces}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[t]{0.32\linewidth}
+    \centering
+    \safeincludegraphics[width=\linewidth]{Images/phase_surface_with_thickness_low_flow.jpg}
+    \caption{Low flow}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.32\linewidth}
+    \centering
+    \safeincludegraphics[width=\linewidth]{Images/phase_surface_with_thickness_median_flow.jpg}
+    \caption{Median flow}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.32\linewidth}
+    \centering
+    \safeincludegraphics[width=\linewidth]{Images/phase_surface_with_thickness_high_flow.jpg}
+    \caption{High flow}
+  \end{subfigure}
+  \caption{Phase-model suitability surfaces with the soil-thickness term. The
+  additional term modestly changes the ranking but does not alter the main
+  interpretation: stable moss is favored away from the deepest central trough.}
+  \label{fig:thickness-phase-surfaces}
+\end{figure}
+
+\begin{thebibliography}{9}
+
+\bibitem{Liu2026}
+Liu, L., Huang, B., Lai, G., Zhou, W., Wu, N., Xiao, Q., Wu, L., Xiong, J., et al. (2026).
+Water table-temperature synergy drives maximal growth and photosynthesis in subtropical
+\textit{Sphagnum palustre} under moderate regimes.
+\textit{BMC Plant Biology}, 26, 318.
+\url{https://url.usb.m.mimecastprotect.com/s/DU0gCLAmQOfX4LXmmSBf2TyLYhR?domain=pmc.ncbi.nlm.nih.gov
+
+\bibitem{Bartels2018}
+Bartels, S.~F., et al. (2018).
+Bryophyte abundance and community composition in humid forests:
+relations with depth-to-water and moisture regime.
+\textit{Frontiers in Plant Science}, 9, 858.
+\url{https://url.usb.m.mimecastprotect.com/s/SE6iCM7nRPI9Wj9RRskhXT8HgjI?domain=frontiersin.org
+
+\bibitem{Macek2022}
+Macek, M., et al. (2022).
+Topography cannot fully substitute microclimate for bryophyte ecology.
+\textit{Science of the Total Environment}, 822, 153377.
+\url{https://url.usb.m.mimecastprotect.com/s/zR2HCN7oVgI9Xo9EEsjilTyvmgF?domain=doi.org
+
+\bibitem{Szyja2023}
+Szyja, M., Felde, V.~J.~M.~N.~L., L\"uckel, S., Tabarelli, M., Leal, I.~R., B\"udel, B., Wirth, R. (2023).
+Biological soil crusts decrease infiltration but increase erosion resistance in a human-disturbed tropical dry forest.
+\textit{Frontiers in Microbiology}, 14, 1136322.
+\url{https://url.usb.m.mimecastprotect.com/s/1hVFCOJpWjfw43w00IrsKTGej1j?domain=pubmed.ncbi.nlm.nih.gov
+
+\bibitem{Review2023}
+Mata-Gonz\'alez, R., et al. (2023).
+A review on effects of biological soil crusts on hydrological processes.
+\textit{Earth-Science Reviews}, 243, 104516.
+\url{https://url.usb.m.mimecastprotect.com/s/LO4KCP6q0kCZMQZooh6tmTxijgn?domain=sciencedirect.com
+
+\end{thebibliography}
+
+\end{document}
+
